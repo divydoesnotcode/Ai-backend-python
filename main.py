@@ -1,35 +1,155 @@
-from fastapi import FastAPI      # Core Framework
-from models import Product      # Importing product model
-# from pydantic import BaseModel   # Basemodel helps in validation
-# from typing import List          # For type hinting
+from fastapi import FastAPI, Depends, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from pydantic import BaseModel
+from ollama_service import generate_vendors_llm
+from vendor_repo import save_vendors_to_db, get_vendors_from_db
 
-app = FastAPI()                # Create FastAPI instance
 
-# Decorator used to give power to the function
+from database import get_db
+from models import Vendor
+import schemas
 
-@app.get("/")
-def read_root():
-    return {"Message": "Welcome to the My Tea API"}
+app = FastAPI()
 
-products = [
-    Product(id=1, name="Green Tea", price=10.99, quantity=100),
-    Product(id=2, name="Black Tea", price=8.99, quantity=150),
-    Product(id=3, name="Oolong Tea", price=12.99, quantity=80),
-    Product(id=4, name="White Tea", price=15.99, quantity=60),
-    Product(id=5, name="Herbal Tea", price=9.99, quantity=200)
-]
+@app.post("/")
+async def root():
+    return {"Messsage" : "Connected to ai_python PostgreSQL Database"}
 
-@app.get("/products")
-def getProducts():
-    return products
 
-@app.get("/product/{id}")
-def get_product_by_id(id:int):
-    for product in products:
-        if product.id == id:
-            return product
-    return "Product not found"
+# Creating Vendors
 
-@app.get("/products/")
-def get_all_products():
-    return products
+@app.post("/vendors", response_model=schemas.VendorResponse)
+async def create_vendor(
+    vendor: schemas.VendorCreate,
+    db: AsyncSession = Depends(get_db)
+):
+    new_vendor = Vendor(
+        id = vendor.id,
+        name = vendor.name,
+        location = vendor.location,
+        contact = vendor.contact
+    )
+
+    db.add(new_vendor)
+    await db.commit()
+    await db.refresh(new_vendor)
+
+    return new_vendor 
+
+# Get Vendors ALL
+
+@app.get("/vendors", response_model=schemas.VendorList)
+async def get_vendors(db: AsyncSession = Depends(get_db)):
+
+    result = await db.execute(select(Vendor).order_by(Vendor.id))
+    vendors = result.scalars().all()
+
+    return {"vendors": vendors}
+
+
+# Update Vendor Details
+
+@app.put("/vendors/{vendor_id}", response_model=schemas.VendorResponse)
+async def update_vendor(vendor_id: int, vendor_update: schemas.VendorCreate, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(Vendor).where(Vendor.id == vendor_id))
+    vendor = result.scalar_one_or_none()
+
+    if vendor is None:
+        raise HTTPException(status_code=404, detail="Vendor not found")
+
+    vendor.name = vendor_update.name
+    vendor.location = vendor_update.location
+    vendor.contact = vendor_update.contact
+
+    await db.commit()
+    await db.refresh(vendor)
+
+    return vendor
+
+# Delete vendor by id
+
+@app.delete("/vendors/{vendor_id}")
+async def delete_vendor(vendor_id: int, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(Vendor).where(Vendor.id == vendor_id))
+    vendor = result.scalar_one_or_none()
+
+    if vendor is None:
+        raise HTTPException(status_code=404, detail="Vendor not found")
+
+    await db.delete(vendor)
+    await db.commit()
+
+    return {"message": "Vendor deleted successfully"}
+
+
+
+
+############## Ollama API Integration ##############
+
+
+
+class VendorRequest(BaseModel):
+    item: str
+    location: str
+
+@app.get("/generate")
+def generate():
+    return {"Status" : "FastAPI and Ollama Running Successfully"}
+
+# @app.post("/generate-vendor")
+# def generate_vendor(req: VendorRequest):
+    
+#     response = generate_vendors(req.item, req.location)
+    # return {"item" : req.item, 
+    #         "location" : req.location, 
+    #         "vendor" : response}
+
+
+# Generate and save vendors from Ollama
+# @app.post("/generate-and-save-vendor")
+# def generate_and_save_vendor(req: VendorRequest):
+   
+#    # Generate vendors from Ollama
+#    result = generate_vendors(req.item, req.location)
+
+#    vendors = result.get("vendors")
+
+#    # Save vendors to database
+#    save_vendors(req.item, vendors)
+
+#    return {"success" : True,
+#    "vendor_saved" : len(vendors),
+#    "vendors" : vendors}
+
+@app.post("/generate-vendors-flow")
+def generate_vendors_flow(req: VendorRequest):
+
+    # STEP 1: Check database first
+    db_vendors = get_vendors_from_db(req.item, req.location)
+
+    if db_vendors:
+        return {
+            "source": "database",
+            "count": len(db_vendors),
+            "vendors": db_vendors
+        }
+
+    llm_response = generate_vendors_llm(req.item, req.location)
+
+    vendors = llm_response.get("vendors", [])
+
+    saved_count = save_vendors_to_db(
+        req.item,
+        req.location,
+        vendors
+    )
+
+    return {
+        "source": "llm",
+        "generated": len(vendors),
+        "saved": saved_count,
+        "vendors": vendors
+    }
+   
+   
