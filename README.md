@@ -1,51 +1,56 @@
-🚀 AI Vendor Generation System
+# AI Vendor Generation System
 
-An AI-powered procurement vendor generation system using FastAPI, Ollama (LLM), and PostgreSQL.
-The system first checks the database for vendors and uses the LLM only when vendors are not found, ensuring efficiency and performance.
+An AI-powered procurement vendor generation system built using FastAPI, Ollama, and PostgreSQL.
 
-⸻
+The system follows a database-first approach. It checks the database for vendors and uses the LLM only if vendors are not found.
 
-📌 Features
-	•	⚡ FastAPI backend
-	•	🤖 Ollama LLM integration (ministral-3:8b)
-	•	🗄️ PostgreSQL database storage
-	•	🔍 Database-first search
-	•	🧠 LLM fallback vendor generation
-	•	🚫 Duplicate vendor prevention
-	•	📄 Structured JSON output
-	•	🏗️ Production-ready architecture
+---
 
-⸻
+## Features
 
-🧠 Architecture
+- FastAPI backend
+- Ollama LLM integration (ministral-3:8b)
+- PostgreSQL database storage
+- Database-first search logic
+- Automatic vendor generation using LLM
+- Duplicate prevention using database constraints
+- Structured JSON responses
 
-flowchart TD
-    A[User Request] --> B[FastAPI]
-    B --> C{Check Database}
-    C -->|Found| D[Return Vendors]
-    C -->|Not Found| E[Call Ollama LLM]
-    E --> F[Generate Vendors]
-    F --> G[Store in PostgreSQL]
-    G --> H[Return Response]
+---
 
+## Architecture
 
-⸻
+User Request  
+↓  
+FastAPI  
+↓  
+Check PostgreSQL  
+↓  
+If Found → Return Vendors  
+If Not Found → Call Ollama  
+↓  
+Generate Vendors  
+↓  
+Store in PostgreSQL  
+↓  
+Return Response  
 
-🛠️ Tech Stack
+---
 
-Technology	Purpose
-FastAPI	Backend Framework
-Ollama	Local LLM
-ministral-3:8b	AI Model
-PostgreSQL	Database
-Python	Core Language
-psycopg2	Database Driver
+## Tech Stack
 
+- Python
+- FastAPI
+- Ollama
+- ministral-3:8b
+- PostgreSQL
+- psycopg2
 
-⸻
+---
 
-📁 Project Structure
+## Project Structure
 
+```
 ai-vendor-generation/
 │
 ├── main.py
@@ -54,62 +59,76 @@ ai-vendor-generation/
 ├── vendor_repository.py
 ├── requirements.txt
 └── README.md
+```
 
+---
 
-⸻
+## Installation
 
-⚙️ Installation
+### 1. Clone repository
 
-1. Clone Repository
-
+```
 git clone https://github.com/yourusername/ai-vendor-generation.git
 cd ai-vendor-generation
+```
 
+### 2. Create virtual environment
 
-⸻
+Mac/Linux:
 
-2. Create Virtual Environment
-
+```
 python -m venv venv
+source venv/bin/activate
+```
 
-source venv/bin/activate      # Mac/Linux
-venv\Scripts\activate         # Windows
+Windows:
 
+```
+python -m venv venv
+venv\Scripts\activate
+```
 
-⸻
+### 3. Install dependencies
 
-3. Install Dependencies
-
+```
 pip install -r requirements.txt
+```
 
+---
 
-⸻
-
-🤖 Setup Ollama
+## Setup Ollama
 
 Start Ollama:
 
+```
 ollama serve
+```
 
 Pull model:
 
+```
 ollama pull ministral-3:8b
+```
 
-Verify:
+Check installed models:
 
+```
 ollama list
+```
 
+---
 
-⸻
-
-🗄️ PostgreSQL Setup
+## PostgreSQL Setup
 
 Create database:
 
+```
 CREATE DATABASE ai_python;
+```
 
 Create table:
 
+```
 CREATE TABLE vendors (
     id SERIAL PRIMARY KEY,
     item_name TEXT NOT NULL,
@@ -122,104 +141,109 @@ CREATE TABLE vendors (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(item_name, location, vendor_name)
 );
+```
 
+---
 
-⸻
+## Configure Database
 
-▶️ Run Server
+Update db.py:
 
+```
+host="localhost"
+database="ai_python"
+user="postgres"
+password="your_password"
+```
+
+---
+
+## Run FastAPI Server
+
+```
 uvicorn main:app --reload
+```
 
-Open Swagger UI:
+Open browser:
 
+```
 http://127.0.0.1:8000/docs
+```
 
+---
 
-⸻
+## API Example
 
-📡 API Example
+Endpoint:
 
-Request
-
+```
 POST /vendors
+```
 
+Request:
+
+```
 {
   "item": "cement",
   "location": "Ahmedabad"
 }
+```
 
+Response:
 
-⸻
-
-Response (Database)
-
+```
 {
   "source": "database",
   "count": 5,
   "vendors": [...]
 }
+```
 
+OR
 
-⸻
-
-Response (LLM)
-
+```
 {
   "source": "llm",
   "generated": 5,
   "saved": 5,
   "vendors": [...]
 }
+```
 
+---
 
-⸻
+## Workflow
 
-🔄 Workflow
+1. User sends request
+2. System checks PostgreSQL
+3. If vendors found → return
+4. If not found → use Ollama
+5. Save vendors to database
+6. Return response
 
-User → FastAPI → Database → LLM (if needed) → PostgreSQL → Response
+---
 
+## Requirements
 
-⸻
+```
+fastapi
+uvicorn
+psycopg2-binary
+requests
+pydantic
+```
 
-🚫 Duplicate Prevention
+---
 
-Uses:
-	•	PostgreSQL UNIQUE constraint
-	•	Data normalization
-	•	Conflict handling
-
-⸻
-
-👨‍💻 Author
+## Author
 
 Divy Barot
-Final Year Project – AI Vendor Generation System
 
-⸻
+Final Year Project  
+AI Vendor Generation System
 
-⭐ Future Improvements
-	•	Vendor ranking
-	•	Confidence scoring
-	•	Vector database integration
-	•	Admin dashboard
-	•	Vendor verification system
+---
 
-⸻
+## License
 
-Why this looks better on GitHub
-
-This version uses:
-	•	Proper headings
-	•	Emojis for visual structure
-	•	Tables
-	•	Code blocks
-	•	Mermaid diagram
-	•	Clean spacing
-
-⸻
-
-If you want, I can create an even more impressive README with:
-	•	GitHub badges
-	•	Screenshots section
-	•	API diagrams
-	•	Professional open-source layout
+MIT License
