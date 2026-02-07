@@ -1,94 +1,107 @@
-# AI Vendor Generation System
+# 🤖 AI Vendor Generation System
 
-An AI-powered procurement vendor generation system built using FastAPI, Ollama, and PostgreSQL.
+An AI-powered procurement vendor generation system built using **FastAPI ⚡, Ollama 🧠, and PostgreSQL 🗄️**.
 
-The system follows a database-first approach. It checks the database for vendors and uses the LLM only if vendors are not found.
-
----
-
-## Features
-
-- FastAPI backend
-- Ollama LLM integration (ministral-3:8b)
-- PostgreSQL database storage
-- Database-first search logic
-- Automatic vendor generation using LLM
-- Duplicate prevention using database constraints
-- Structured JSON responses
+This system follows a **Database-First, LLM-Fallback architecture** to ensure fast response, reduced LLM usage, and efficient vendor storage.
 
 ---
 
-## Architecture
+## ✨ Features
 
-User Request  
-↓  
-FastAPI  
-↓  
-Check PostgreSQL  
-↓  
-If Found → Return Vendors  
-If Not Found → Call Ollama  
-↓  
-Generate Vendors  
-↓  
-Store in PostgreSQL  
-↓  
-Return Response  
+- ⚡ FastAPI high-performance backend  
+- 🧠 Ollama LLM integration (ministral-3:8b)  
+- 🗄️ PostgreSQL vendor database  
+- 🔍 Database-first vendor search  
+- 🤖 Automatic vendor generation using AI  
+- 🚫 Duplicate vendor prevention  
+- 📦 Structured JSON output  
+- 🏗️ Production-ready architecture  
 
 ---
 
-## Tech Stack
-
-- Python
-- FastAPI
-- Ollama
-- ministral-3:8b
-- PostgreSQL
-- psycopg2
-
----
-
-## Project Structure
+## 🧠 System Architecture
 
 ```
-ai-vendor-generation/
+👤 User Request
+     ↓
+⚡ FastAPI Server
+     ↓
+🗄️ PostgreSQL Database
+     ↓
+✅ Vendors Found → Return Result
+❌ Vendors Not Found → 🧠 Ollama LLM
+                          ↓
+                    🤖 Generate Vendors
+                          ↓
+                    💾 Save to Database
+                          ↓
+                    📤 Return Response
+```
+
+---
+
+## 🛠️ Tech Stack
+
+| Technology | Icon | Purpose |
+|----------|------|---------|
+| Python | 🐍 | Core programming language |
+| FastAPI | ⚡ | Backend framework |
+| Ollama | 🧠 | LLM runtime |
+| ministral-3:8b | 🤖 | AI model |
+| PostgreSQL | 🗄️ | Database |
+| psycopg2 | 🔌 | Database connector |
+| JSON | 📦 | Data format |
+
+---
+
+## 📁 Project Structure
+
+```
+📦 ai-vendor-generation
 │
-├── main.py
-├── db.py
-├── ollama_service.py
-├── vendor_repository.py
-├── requirements.txt
-└── README.md
+├── 📝 README.md            # Documentation
+├── 🐍 database.py         
+├── 🐍 db.py
+├── 🐍 main.py
+├── 🐍 models.py
+├── 🐍 ollama_service.py
+├── 📄 requirements.txt
+├── 🐍 schemas.py
+└── 🐍 vendor_repo.py     
 ```
 
 ---
 
-## Installation
+## ⚙️ Installation Guide
 
-### 1. Clone repository
+### 1️⃣ Clone Repository
 
 ```
 git clone https://github.com/yourusername/ai-vendor-generation.git
 cd ai-vendor-generation
 ```
 
-### 2. Create virtual environment
+---
 
-Mac/Linux:
+### 2️⃣ Create Virtual Environment
+
+Mac/Linux 🍎🐧
 
 ```
 python -m venv venv
 source venv/bin/activate
 ```
 
-Windows:
+Windows 🪟
 
 ```
 python -m venv venv
 venv\Scripts\activate
 ```
 
-### 3. Install dependencies
+---
+
+### 3️⃣ Install Dependencies 📦
 
 ```
 pip install -r requirements.txt
@@ -96,21 +109,21 @@ pip install -r requirements.txt
 
 ---
 
-## Setup Ollama
+## 🧠 Setup Ollama
 
-Start Ollama:
+Start Ollama server:
 
 ```
 ollama serve
 ```
 
-Pull model:
+Pull AI model:
 
 ```
 ollama pull ministral-3:8b
 ```
 
-Check installed models:
+Verify installation:
 
 ```
 ollama list
@@ -118,7 +131,7 @@ ollama list
 
 ---
 
-## PostgreSQL Setup
+## 🗄️ PostgreSQL Setup
 
 Create database:
 
@@ -126,7 +139,7 @@ Create database:
 CREATE DATABASE ai_python;
 ```
 
-Create table:
+Create vendors table:
 
 ```
 CREATE TABLE vendors (
@@ -145,26 +158,19 @@ CREATE TABLE vendors (
 
 ---
 
-## Configure Database
-
-Update db.py:
-
-```
-host="localhost"
-database="ai_python"
-user="postgres"
-password="your_password"
-```
-
----
-
-## Run FastAPI Server
+## ▶️ Run FastAPI Server
 
 ```
 uvicorn main:app --reload
 ```
 
-Open browser:
+Server URL 🌐
+
+```
+http://127.0.0.1:8000
+```
+
+Swagger Docs 📄
 
 ```
 http://127.0.0.1:8000/docs
@@ -172,15 +178,13 @@ http://127.0.0.1:8000/docs
 
 ---
 
-## API Example
+## 📡 API Example
 
-Endpoint:
+### 📥 Request
 
 ```
 POST /vendors
 ```
-
-Request:
 
 ```
 {
@@ -189,7 +193,9 @@ Request:
 }
 ```
 
-Response:
+---
+
+### 📤 Response (Database)
 
 ```
 {
@@ -199,7 +205,9 @@ Response:
 }
 ```
 
-OR
+---
+
+### 📤 Response (LLM)
 
 ```
 {
@@ -212,38 +220,58 @@ OR
 
 ---
 
-## Workflow
-
-1. User sends request
-2. System checks PostgreSQL
-3. If vendors found → return
-4. If not found → use Ollama
-5. Save vendors to database
-6. Return response
-
----
-
-## Requirements
+## 🔄 Workflow
 
 ```
-fastapi
-uvicorn
-psycopg2-binary
-requests
-pydantic
+👤 User Request
+   ↓
+⚡ FastAPI
+   ↓
+🗄️ PostgreSQL Check
+   ↓
+❌ Not Found → 🧠 Ollama
+   ↓
+💾 Save Vendors
+   ↓
+📤 Return Response
 ```
 
 ---
 
-## Author
+## 🚫 Duplicate Prevention
 
-Divy Barot
+Uses multiple safety layers:
 
-Final Year Project  
-AI Vendor Generation System
+- 🧠 Data normalization
+- 🗄️ PostgreSQL UNIQUE constraint
+- ⚡ Conflict handling logic
 
 ---
 
-## License
+## 🎯 Use Cases
 
-MIT License
+- 🏭 Procurement automation  
+- 🏢 Vendor discovery systems  
+- 🤖 AI supply chain tools  
+- 📊 Vendor intelligence platforms  
+
+---
+
+## 👨‍💻 Author
+
+**Divy Barot**  
+---
+
+## 🚀 Future Improvements
+
+- 📊 Vendor ranking system  
+- 🧠 Confidence scoring  
+- 🔎 Vendor verification  
+- 🌐 Admin dashboard  
+- 📦 Vector database integration  
+
+---
+
+## 📜 License
+
+MIT License 📄
