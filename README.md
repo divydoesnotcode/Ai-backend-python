@@ -258,9 +258,7 @@ Uses multiple safety layers:
 ---
 
 ## 👨‍💻 Author
-
 **Divy Barot**  
----
 
 ## 🚀 Future Improvements
 
