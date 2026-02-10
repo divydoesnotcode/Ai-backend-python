@@ -137,7 +137,7 @@ def generate_vendors_flow(req: VendorRequest):
 
     llm_response = generate_vendors_llm(req.item, req.location)
 
-    vendors = llm_response.get("vendors", [])
+    vendors = llm_response.get("vendors", [])   
 
     saved_count = save_vendors_to_db(
         req.item,
