@@ -11,6 +11,9 @@ starlette==0.50.0
 typing-inspection==0.4.2
 typing_extensions==4.15.0
 uvicorn==0.40.0
-sqlalchemy
-asyncpg
-greenlet
+sqlalchemy==2.0.46
+asyncpg==0.31.0
+greenlet==3.3.1
+psycopg2-binary==2.9.11
+requests==2.32.5
+

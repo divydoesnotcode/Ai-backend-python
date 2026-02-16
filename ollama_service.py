@@ -22,7 +22,7 @@ Schema:
     }}
   ]
 }}
-
+ If the mobile number is not available, return an empty string. Do not create any data.
 Item: {item}
 Location: {location}
 
