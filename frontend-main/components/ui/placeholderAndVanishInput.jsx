@@ -1,6 +1,7 @@
 "use client";
 
 import { PlaceholdersAndVanishInput } from "../ui/placeholders-and-vanish-input";
+import { CoverDemo } from "./coverDemo";
 
 export function PlaceholdersAndVanishInputDemo() {
   const placeholders = [
@@ -20,10 +21,7 @@ export function PlaceholdersAndVanishInputDemo() {
   };
   return (
     <div className="pt-20 pb-10 flex flex-col justify-center  items-center px-4">
-      <h2
-        className="mb-10 sm:mb-20 text-xl text-center sm:text-5xl text-white">
-        Ask ProcureGenie Anything 😁
-      </h2>
+      <CoverDemo />
       <PlaceholdersAndVanishInput placeholders={placeholders} onChange={handleChange} onSubmit={onSubmit} />
     </div>
   );
